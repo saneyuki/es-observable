@@ -35,7 +35,7 @@ export default {
             let values = [],
                 turns = 0;
 
-            Observable.of(1, 2, 3, 4).subscribe({
+            Observable.of(1, 2, 3, 4).observe({
 
                 next(v) {
                     values.push(v);
@@ -63,7 +63,7 @@ export default {
 
             let values = [];
 
-            let cancel = Observable.of(1, 2, 3, 4).subscribe({
+            let cancel = Observable.of(1, 2, 3, 4).observe({
 
                 next(v) {
 
@@ -85,7 +85,7 @@ export default {
 
             let values = [];
 
-            let cancel = Observable.of(1, 2, 3, 4).subscribe({
+            let cancel = Observable.of(1, 2, 3, 4).observe({
                 next(v) { values.push(v) }
             });
 

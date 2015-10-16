@@ -5,7 +5,7 @@ export default {
     "SubscriptionObserver.prototype has an next method" (test, { Observable }) {
 
         let observer;
-        new Observable(x => { observer = x }).subscribe({});
+        new Observable(x => { observer = x }).observe({});
 
         testMethodProperty(test, Object.getPrototypeOf(observer), "next", {
             configurable: true,
@@ -22,7 +22,7 @@ export default {
 
             observer.next(token, 1, 2);
 
-        }).subscribe({
+        }).observe({
 
             next(value, ...args) {
                 test._("Input value is forwarded to the observer")
@@ -48,7 +48,7 @@ export default {
             test._("Returns undefined when closed")
             .equals(observer.next(), undefined);
 
-        }).subscribe({
+        }).observe({
             next() { return token }
         });
     },
@@ -58,30 +58,30 @@ export default {
         let observer,
             observable = new Observable(x => { observer = x });
 
-        observable.subscribe({});
+        observable.observe({});
         test._("If property does not exist, then next returns undefined")
         .equals(observer.next(), undefined);
 
-        observable.subscribe({ next: undefined });
+        observable.observe({ next: undefined });
         test._("If property is undefined, then next returns undefined")
         .equals(observer.next(), undefined);
 
-        observable.subscribe({ next: null });
+        observable.observe({ next: null });
         test._("If property is null, then next returns undefined")
         .equals(observer.next(), undefined);
 
-        observable.subscribe({ next: {} });
+        observable.observe({ next: {} });
         test._("If property is not a function, then an error is thrown")
         .throws(_=> observer.next(), TypeError);
 
         let actual = {};
-        observable.subscribe(actual);
+        observable.observe(actual);
         actual.next = (_=> 1);
         test._("Method is not accessed until complete is called")
         .equals(observer.next(), 1);
 
         let called = 0;
-        observable.subscribe({
+        observable.observe({
             get next() {
                 called++;
                 return function() {};
@@ -93,7 +93,7 @@ export default {
         .equals(called, 0);
 
         called = 0;
-        observable.subscribe({
+        observable.observe({
             get next() {
                 called++;
                 return function() {};
@@ -115,7 +115,7 @@ export default {
         });
 
         called = 0;
-        observable.subscribe({ next() { throw new Error() } });
+        observable.observe({ next() { throw new Error() } });
         try { observer.next() }
         catch (x) {}
         test._("Cleanup function is called when next throws an error")
@@ -126,7 +126,7 @@ export default {
         new Observable(x => {
             observer = x;
             return _=> { throw new Error() };
-        }).subscribe({ next() { throw error } });
+        }).observe({ next() { throw error } });
 
         try { observer.next() }
         catch (x) { caught = x }

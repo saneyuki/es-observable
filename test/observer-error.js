@@ -5,7 +5,7 @@ export default {
     "SubscriptionObserver.prototype has an error method" (test, { Observable }) {
 
         let observer;
-        new Observable(x => { observer = x }).subscribe({});
+        new Observable(x => { observer = x }).observe({});
 
         testMethodProperty(test, Object.getPrototypeOf(observer), "error", {
             configurable: true,
@@ -22,7 +22,7 @@ export default {
 
             observer.error(token, 1, 2);
 
-        }).subscribe({
+        }).observe({
 
             error(value, ...args) {
                 test._("Input value is forwarded to the observer")
@@ -46,7 +46,7 @@ export default {
             test._("Throws the input when closed")
             .throws(_=> { observer.error(token) }, token);
 
-        }).subscribe({
+        }).observe({
             error() { return token }
         });
     },
@@ -57,30 +57,30 @@ export default {
             error = new Error(),
             observable = new Observable(x => { observer = x });
 
-        observable.subscribe({});
+        observable.observe({});
         test._("If property does not exist, then error throws the input")
         .throws(_=> observer.error(error), error);
 
-        observable.subscribe({ error: undefined });
+        observable.observe({ error: undefined });
         test._("If property is undefined, then error throws the input")
         .throws(_=> observer.error(error), error);
 
-        observable.subscribe({ error: null });
+        observable.observe({ error: null });
         test._("If property is null, then error throws the input")
         .throws(_=> observer.error(error), error);
 
-        observable.subscribe({ error: {} });
+        observable.observe({ error: {} });
         test._("If property is not a function, then an error is thrown")
         .throws(_=> observer.error(), TypeError);
 
         let actual = {};
-        observable.subscribe(actual);
+        observable.observe(actual);
         actual.error = (_=> 1);
         test._("Method is not accessed until error is called")
         .equals(observer.error(error), 1);
 
         let called = 0;
-        observable.subscribe({
+        observable.observe({
             get error() {
                 called++;
                 return function() {};
@@ -93,7 +93,7 @@ export default {
         .equals(called, 0);
 
         called = 0;
-        observable.subscribe({
+        observable.observe({
             get error() {
                 called++;
                 return function() {};
@@ -104,7 +104,7 @@ export default {
         .equals(called, 1);
 
         called = 0;
-        observable.subscribe({
+        observable.observe({
             next() { called++ },
             get error() {
                 called++;
@@ -128,27 +128,27 @@ export default {
         });
 
         called = 0;
-        observable.subscribe({});
+        observable.observe({});
         try { observer.error() }
         catch (x) {}
         test._("Cleanup function is called when observer does not have an error method")
         .equals(called, 1);
 
         called = 0;
-        observable.subscribe({ error() { return 1 } });
+        observable.observe({ error() { return 1 } });
         observer.error();
         test._("Cleanup function is called when observer has an error method")
         .equals(called, 1);
 
         called = 0;
-        observable.subscribe({ get error() { throw new Error() } });
+        observable.observe({ get error() { throw new Error() } });
         try { observer.error() }
         catch (x) {}
         test._("Cleanup function is called when method lookup throws")
         .equals(called, 1);
 
         called = 0;
-        observable.subscribe({ error() { throw new Error() } });
+        observable.observe({ error() { throw new Error() } });
         try { observer.error() }
         catch (x) {}
         test._("Cleanup function is called when method throws")
@@ -159,7 +159,7 @@ export default {
         new Observable(x => {
             observer = x;
             return _=> { throw new Error() };
-        }).subscribe({ error() { throw error } });
+        }).observe({ error() { throw error } });
 
         try { observer.error() }
         catch (x) { caught = x }

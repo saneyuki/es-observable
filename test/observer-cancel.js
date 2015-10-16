@@ -5,7 +5,7 @@ export default {
     "SubscriptionObserver.prototype has a cancel method" (test, { Observable }) {
 
         let observer;
-        new Observable(x => { observer = x }).subscribe({});
+        new Observable(x => { observer = x }).observe({});
 
         testMethodProperty(test, Object.getPrototypeOf(observer), "cancel", {
             configurable: true,
@@ -20,7 +20,7 @@ export default {
 
             test._("Cancel returns undefined").equals(observer.cancel(), undefined);
 
-        }).subscribe({});
+        }).observe({});
     },
 
     "Cleanup functions" (test, { Observable }) {
@@ -32,7 +32,7 @@ export default {
             return _=> { called++ };
         });
 
-        observable.subscribe({});
+        observable.observe({});
         observer.cancel();
 
         test._("Cleanup function is called by cancel")
@@ -44,7 +44,7 @@ export default {
         .equals(called, 1);
 
         called = 0;
-        observable.subscribe({});
+        observable.observe({});
         observer.complete();
         observer.cancel();
 
@@ -52,7 +52,7 @@ export default {
         .equals(called, 1);
 
         called = 0;
-        observable.subscribe({ error() {} });
+        observable.observe({ error() {} });
         observer.error();
         observer.cancel();
 
@@ -63,7 +63,7 @@ export default {
         new Observable(x => {
             observer = x;
             return _=> { called++; observer.cancel(); };
-        }).subscribe({});
+        }).observe({});
 
         observer.cancel();
 
@@ -75,7 +75,7 @@ export default {
 
         let observer, called = 0;
 
-        new Observable(x => { observer = x }).subscribe({
+        new Observable(x => { observer = x }).observe({
             next() { called++ },
             error() { called++ },
             complete() { called++ },

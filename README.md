@@ -47,14 +47,14 @@ function commandKeys(element) {
 When we want to consume the event stream, we subscribe with an **observer**.
 
 ```js
-let unsubscribe = commandKeys(inputElement).subscribe({
+let unsubscribe = commandKeys(inputElement).observe({
     next(val) { console.log("Received key command: " + val) },
     error(err) { console.log("Received an error: " + err) },
     complete() { console.log("Stream complete") },
 });
 ```
 
-The function returned by **subscribe** will allow us to cancel the subscription at any time.
+The function returned by **observe** will allow us to cancel the subscription at any time.
 Upon cancelation, the Observable's cleanup function will be executed.
 
 ```js
@@ -109,7 +109,7 @@ interface Observable {
     constructor(subscriber : SubscriberFunction);
 
     // Subscribes to the sequence
-    subscribe(observer : Observer) : (void => void);
+    observe(observer : Observer) : (void => void);
 
     // Subscribes to the sequence with a callback, returning a promise
     forEach(onNext : any => any) : Promise;
@@ -141,7 +141,7 @@ function SubscriberFunction(observer: SubscriptionObserver) : (void => void);
 are delivered asynchronously, in a future turn of the event loop.
 
 ```js
-Observable.of("red", "green", "blue").subscribe({
+Observable.of("red", "green", "blue").observe({
     next(color) {
         console.log(color);
     }
@@ -177,7 +177,7 @@ Observable.from({
             }, 2000);
         });
     }
-}).subscribe({
+}).observe({
     next(value) {
         console.log(value);
     }
@@ -196,7 +196,7 @@ Observable.from(observable) === observable; // true
 Converting from an iterable to an Observable:
 
 ```js
-Observable.from(["mercury", "venus", "earth"]).subscribe({
+Observable.from(["mercury", "venus", "earth"]).observe({
     next(value) {
         console.log(value);
     }
@@ -212,7 +212,7 @@ Observable.from(["mercury", "venus", "earth"]).subscribe({
 #### Observer ####
 
 An Observer is used to recieve data from an Observable, and is supplied as an
-argument to **subscribe**.
+argument to **observe**.
 
 All methods are optional.
 
@@ -233,7 +233,7 @@ interface Observer {
 #### SubscriptionObserver ####
 
 A SubscriptionObserver is a normalized Observer which wraps the observer supplied to
-**subscribe**.  It also provides a **closed** property which may be used to determine
+**observe**.  It also provides a **closed** property which may be used to determine
 whether the corresponding subscription has been closed.
 
 ```js
@@ -268,7 +268,7 @@ intended to be called as a function and will throw an exception when called in
 that manner.
 
 The *subscriber* argument must be a function object.  It is called each time the
-*subscribe* method of the Observable object is invoked.  The *subscriber* function is
+*observe* method of the Observable object is invoked.  The *subscriber* function is
 called with a wrapped observer object and may optionally return a function which will
 cancel the subscription.
 
@@ -289,13 +289,13 @@ The **Observable** constructor performs the following steps:
 
 1. Return the **this** value.
 
-#### Observable.prototype.subscribe(observer) ####
+#### Observable.prototype.observe(observer) ####
 
-The **subscribe** function begins sending values to the supplied *observer* object
+The **observe** function begins sending values to the supplied *observer* object
 by executing the Observable object's subscriber function.  It returns a function
 object which may be used to cancel the subscription.
 
-The **subscribe** function performs the following steps:
+The **observe** function performs the following steps:
 
 1. Let *O* be the **this** value.
 1. If Type(*O*) is not Object, throw a **TypeError** exception.
@@ -350,7 +350,7 @@ The **length** property of a subscription cancel function is **0**.
 #### Subscription Observer Objects ####
 
 A Subscription Observer is an object which wraps the *observer* argument supplied to the
-*subscribe* method of Observable objects.  Subscription Observer objects are passed as
+*observe* method of Observable objects.  Subscription Observer objects are passed as
 the single parameter to an observable's *subscriber* function.  They enforce the following
 guarantees:
 

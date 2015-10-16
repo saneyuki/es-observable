@@ -26,21 +26,21 @@ export default {
         });
     },
 
-    "Subscribe is called on the 'this' value" (test, { Observable }) {
+    "Observe is called on the 'this' value" (test, { Observable }) {
 
         let called = 0,
             observer = null;
 
         Observable.prototype.forEach.call({
 
-            subscribe(x) {
+            observe(x) {
                 called++;
                 observer = x;
             }
 
         }, _=> null);
 
-        test._("The subscribe method is called with an observer")
+        test._("The observe method is called with an observer")
         .equals(called, 1)
         .equals(typeof observer, "object")
         .equals(typeof observer.next, "function")

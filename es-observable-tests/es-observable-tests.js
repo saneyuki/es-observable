@@ -1,6 +1,6 @@
 /*=esdown=*/(function(fn, name) { if (typeof exports !== 'undefined') fn(require, exports, module); else if (typeof self !== 'undefined') fn(void 0, name === '*' ? self : (name ? self[name] = {} : {})); })(function(require, exports, module) { 'use strict'; var _esdown = {}; (function() { var exports = _esdown;
 
-var VERSION = "0.9.16";
+var VERSION = "1.0.1";
 
 var GLOBAL = (function() {
 
@@ -949,9 +949,9 @@ var testMethodProperty = __M(17).testMethodProperty;
 
 exports["default"] = {
 
-    "Observable.prototype has a subscribe property": function(test, __$0) { var __$1; var Observable = (__$1 = _esdown.objd(__$0), __$1.Observable); 
+    "Observable.prototype has an observe property": function(test, __$0) { var __$1; var Observable = (__$1 = _esdown.objd(__$0), __$1.Observable); 
 
-        testMethodProperty(test, Observable.prototype, "subscribe", {
+        testMethodProperty(test, Observable.prototype, "observe", {
             configurable: true,
             writable: true,
             length: 1,
@@ -964,23 +964,23 @@ exports["default"] = {
 
         test
         ._("Throws if observer is not an object")
-        .throws(function(_) { return x.subscribe(null); }, TypeError)
-        .throws(function(_) { return x.subscribe(undefined); }, TypeError)
-        .throws(function(_) { return x.subscribe(1); }, TypeError)
-        .throws(function(_) { return x.subscribe(true); }, TypeError)
-        .throws(function(_) { return x.subscribe("string"); }, TypeError)
+        .throws(function(_) { return x.observe(null); }, TypeError)
+        .throws(function(_) { return x.observe(undefined); }, TypeError)
+        .throws(function(_) { return x.observe(1); }, TypeError)
+        .throws(function(_) { return x.observe(true); }, TypeError)
+        .throws(function(_) { return x.observe("string"); }, TypeError)
 
         ._("Any object may be an observer")
-        .not().throws(function(_) { return x.subscribe({}); })
-        .not().throws(function(_) { return x.subscribe(Object(1)); })
-        .not().throws(function(_) { return x.subscribe(function() {}); })
+        .not().throws(function(_) { return x.observe({}); })
+        .not().throws(function(_) { return x.observe(Object(1)); })
+        .not().throws(function(_) { return x.observe(function() {}); })
         ;
     },
 
     "Subscriber arguments": function(test, __$0) { var __$1; var Observable = (__$1 = _esdown.objd(__$0), __$1.Observable); 
 
         var observer = null;
-        new Observable(function(x) { observer = x }).subscribe({});
+        new Observable(function(x) { observer = x }).observe({});
 
         test._("Subscriber is called with an observer")
         .equals(typeof observer, "object")
@@ -999,16 +999,16 @@ exports["default"] = {
 
         test
         ._("Undefined can be returned")
-        .not().throws(function(_) { return new Observable(function(sink) { return undefined; }).subscribe(sink); })
+        .not().throws(function(_) { return new Observable(function(sink) { return undefined; }).observe(sink); })
         ._("Null can be returned")
-        .not().throws(function(_) { return new Observable(function(sink) { return null; }).subscribe(sink); })
+        .not().throws(function(_) { return new Observable(function(sink) { return null; }).observe(sink); })
         ._("Functions can be returned")
-        .not().throws(function(_) { return new Observable(function(sink) { return function() {}; }).subscribe(sink); })
+        .not().throws(function(_) { return new Observable(function(sink) { return function() {}; }).observe(sink); })
         ._("Objects cannot be returned")
-        .throws(function(_) { return new Observable(function(sink) { return ({}); }).subscribe(sink); }, TypeError)
+        .throws(function(_) { return new Observable(function(sink) { return ({}); }).observe(sink); }, TypeError)
         ._("Non-functions can be returned")
-        .throws(function(_) { return new Observable(function(sink) { return 0; }).subscribe(sink); }, TypeError)
-        .throws(function(_) { return new Observable(function(sink) { return false; }).subscribe(sink); }, TypeError)
+        .throws(function(_) { return new Observable(function(sink) { return 0; }).observe(sink); }, TypeError)
+        .throws(function(_) { return new Observable(function(sink) { return false; }).observe(sink); }, TypeError)
         ;
     },
 
@@ -1017,7 +1017,7 @@ exports["default"] = {
         var called = 0;
         var cancel = new Observable(function(observer) {
             return function(_) { return called++; };
-        }).subscribe({});
+        }).observe({});
 
         test
         ._("Subscribe returns a function")
@@ -1036,7 +1036,7 @@ exports["default"] = {
 
         var unsubscribe = new Observable(function(sink) {
             return function(_) { called++ };
-        }).subscribe({
+        }).observe({
             complete: function(v) { returned++ },
         });
 
@@ -1055,7 +1055,7 @@ exports["default"] = {
         new Observable(function(sink) {
             sink.error(1);
             return function(_) { called++ };
-        }).subscribe({
+        }).observe({
             error: function(v) {},
         });
 
@@ -1067,7 +1067,7 @@ exports["default"] = {
         new Observable(function(sink) {
             sink.complete(1);
             return function(_) { called++ };
-        }).subscribe({
+        }).observe({
             complete: function(v) {},
         });
 
@@ -1082,10 +1082,10 @@ exports["default"] = {
             observable = new Observable(function(_) { throw error });
 
         test._("Subscribe throws if the observer does not handle errors")
-        .throws(function(_) { return observable.subscribe({}); }, error);
+        .throws(function(_) { return observable.observe({}); }, error);
 
         var thrown = null;
-        observable.subscribe({ error: function(e) { thrown = e } });
+        observable.observe({ error: function(e) { thrown = e } });
 
         test._("Subscribe sends an error to the observer")
         .equals(thrown, error);
@@ -1125,21 +1125,21 @@ exports["default"] = {
         });
     },
 
-    "Subscribe is called on the 'this' value": function(test, __$0) { var __$1; var Observable = (__$1 = _esdown.objd(__$0), __$1.Observable); 
+    "Observe is called on the 'this' value": function(test, __$0) { var __$1; var Observable = (__$1 = _esdown.objd(__$0), __$1.Observable); 
 
         var called = 0,
             observer = null;
 
         Observable.prototype.forEach.call({
 
-            subscribe: function(x) {
+            observe: function(x) {
                 called++;
                 observer = x;
             }
 
         }, function(_) { return null; });
 
-        test._("The subscribe method is called with an observer")
+        test._("The observe method is called with an observer")
         .equals(called, 1)
         .equals(typeof observer, "object")
         .equals(typeof observer.next, "function")
@@ -1271,7 +1271,7 @@ exports["default"] = {
             returns.push(observer.next(1));
             returns.push(observer.next(2));
             observer.complete();
-        }).map(function(x) { return x * 2; }).subscribe({
+        }).map(function(x) { return x * 2; }).observe({
             next: function(v) { values.push(v); return -v; }
         });
 
@@ -1292,7 +1292,7 @@ exports["default"] = {
 
         new Observable(function(observer) {
             returned = observer.next(1);
-        }).map(function(x) { throw error }).subscribe({
+        }).map(function(x) { throw error }).observe({
             error: function(e) { thrown = e; return token; }
         });
 
@@ -1313,7 +1313,7 @@ exports["default"] = {
 
         new Observable(function(observer) {
             returned = observer.error(error);
-        }).map(function(x) { return x; }).subscribe({
+        }).map(function(x) { return x; }).observe({
             error: function(e) { thrown = e; return token; }
         });
 
@@ -1334,7 +1334,7 @@ exports["default"] = {
 
         new Observable(function(observer) {
             returned = observer.complete(arg);
-        }).map(function(x) { return x; }).subscribe({
+        }).map(function(x) { return x; }).observe({
             complete: function(v) { passed = v; return token; }
         });
 
@@ -1411,7 +1411,7 @@ exports["default"] = {
             returns.push(observer.next(3));
             returns.push(observer.next(4));
             observer.complete();
-        }).filter(function(x) { return x % 2; }).subscribe({
+        }).filter(function(x) { return x % 2; }).observe({
             next: function(v) { values.push(v); return -v; }
         });
 
@@ -1432,7 +1432,7 @@ exports["default"] = {
 
         new Observable(function(observer) {
             returned = observer.next(1);
-        }).filter(function(x) { throw error }).subscribe({
+        }).filter(function(x) { throw error }).observe({
             error: function(e) { thrown = e; return token; }
         });
 
@@ -1453,7 +1453,7 @@ exports["default"] = {
 
         new Observable(function(observer) {
             returned = observer.error(error);
-        }).filter(function(x) { return true; }).subscribe({
+        }).filter(function(x) { return true; }).observe({
             error: function(e) { thrown = e; return token; }
         });
 
@@ -1474,7 +1474,7 @@ exports["default"] = {
 
         new Observable(function(observer) {
             returned = observer.complete(arg);
-        }).filter(function(x) { return true; }).subscribe({
+        }).filter(function(x) { return true; }).observe({
             complete: function(v) { passed = v; return token; }
         });
 
@@ -1582,7 +1582,7 @@ exports["default"] = {
             var values = [],
                 turns = 0;
 
-            Observable.of(1, 2, 3, 4).subscribe({
+            Observable.of(1, 2, 3, 4).observe({
 
                 next: function(v) {
                     values.push(v);
@@ -1610,7 +1610,7 @@ exports["default"] = {
 
             var values = [];
 
-            var cancel = Observable.of(1, 2, 3, 4).subscribe({
+            var cancel = Observable.of(1, 2, 3, 4).observe({
 
                 next: function(v) {
 
@@ -1632,7 +1632,7 @@ exports["default"] = {
 
             var values = [];
 
-            var cancel = Observable.of(1, 2, 3, 4).subscribe({
+            var cancel = Observable.of(1, 2, 3, 4).observe({
                 next: function(v) { values.push(v) }
             });
 
@@ -1760,7 +1760,7 @@ exports["default"] = {
         result = Observable.from.call(target, _esdown.computed({
             }, getSymbol("observable"), { _: function() {
                 return {
-                    subscribe: function(x) {
+                    observe: function(x) {
                         input = x;
                         return token;
                     },
@@ -1773,9 +1773,9 @@ exports["default"] = {
         .equals(result.token, token)
         ._("Constructor is called with a function")
         .equals(typeof result.fn, "function")
-        ._("Calling the function calls subscribe on the object and returns the result")
+        ._("Calling the function calls observe on the object and returns the result")
         .equals(result.fn(123), token)
-        ._("The subscriber argument is supplied to the subscribe method")
+        ._("The subscriber argument is supplied to the observe method")
         .equals(input, 123)
         ;
 
@@ -1792,7 +1792,7 @@ exports["default"] = {
             if (hasSymbol("iterator"))
                 iterable = iterable[Symbol.iterator]();
 
-            Observable.from(iterable).subscribe({
+            Observable.from(iterable).observe({
 
                 next: function(v) {
                     values.push(v);
@@ -1820,7 +1820,7 @@ exports["default"] = {
 
             var values = [];
 
-            var cancel = Observable.from([1, 2, 3, 4]).subscribe({
+            var cancel = Observable.from([1, 2, 3, 4]).observe({
 
                 next: function(v) {
 
@@ -1842,7 +1842,7 @@ exports["default"] = {
 
             var values = [];
 
-            var cancel = Observable.from([1, 2, 3, 4]).subscribe({
+            var cancel = Observable.from([1, 2, 3, 4]).observe({
                 next: function(v) { values.push(v) }
             });
 
@@ -1859,7 +1859,7 @@ exports["default"] = {
     "Non-iterables result in a catchable error": function(test, __$0) { var __$1; var Observable = (__$1 = _esdown.objd(__$0), __$1.Observable); 
 
         var error = null;
-        Observable.from({}).subscribe({ error: function(e) { error = e } });
+        Observable.from({}).observe({ error: function(e) { error = e } });
 
         return new Promise(function(resolve) {
 
@@ -1888,7 +1888,7 @@ exports["default"] = {
     "SubscriptionObserver.prototype has an next method": function(test, __$0) { var __$1; var Observable = (__$1 = _esdown.objd(__$0), __$1.Observable); 
 
         var observer;
-        new Observable(function(x) { observer = x }).subscribe({});
+        new Observable(function(x) { observer = x }).observe({});
 
         testMethodProperty(test, Object.getPrototypeOf(observer), "next", {
             configurable: true,
@@ -1905,7 +1905,7 @@ exports["default"] = {
 
             observer.next(token, 1, 2);
 
-        }).subscribe({
+        }).observe({
 
             next: function(value) { for (var args = [], __$0 = 1; __$0 < arguments.length; ++__$0) args.push(arguments[__$0]); 
                 test._("Input value is forwarded to the observer")
@@ -1931,7 +1931,7 @@ exports["default"] = {
             test._("Returns undefined when closed")
             .equals(observer.next(), undefined);
 
-        }).subscribe({
+        }).observe({
             next: function() { return token }
         });
     },
@@ -1941,30 +1941,30 @@ exports["default"] = {
         var observer,
             observable = new Observable(function(x) { observer = x });
 
-        observable.subscribe({});
+        observable.observe({});
         test._("If property does not exist, then next returns undefined")
         .equals(observer.next(), undefined);
 
-        observable.subscribe({ next: undefined });
+        observable.observe({ next: undefined });
         test._("If property is undefined, then next returns undefined")
         .equals(observer.next(), undefined);
 
-        observable.subscribe({ next: null });
+        observable.observe({ next: null });
         test._("If property is null, then next returns undefined")
         .equals(observer.next(), undefined);
 
-        observable.subscribe({ next: {} });
+        observable.observe({ next: {} });
         test._("If property is not a function, then an error is thrown")
         .throws(function(_) { return observer.next(); }, TypeError);
 
         var actual = {};
-        observable.subscribe(actual);
+        observable.observe(actual);
         actual.next = (function(_) { return 1; });
         test._("Method is not accessed until complete is called")
         .equals(observer.next(), 1);
 
         var called = 0;
-        observable.subscribe({
+        observable.observe({
             get next() {
                 called++;
                 return function() {};
@@ -1976,7 +1976,7 @@ exports["default"] = {
         .equals(called, 0);
 
         called = 0;
-        observable.subscribe({
+        observable.observe({
             get next() {
                 called++;
                 return function() {};
@@ -1998,7 +1998,7 @@ exports["default"] = {
         });
 
         called = 0;
-        observable.subscribe({ next: function() { throw new Error() } });
+        observable.observe({ next: function() { throw new Error() } });
         try { observer.next() }
         catch (x) {}
         test._("Cleanup function is called when next throws an error")
@@ -2009,7 +2009,7 @@ exports["default"] = {
         new Observable(function(x) {
             observer = x;
             return function(_) { throw new Error() };
-        }).subscribe({ next: function() { throw error } });
+        }).observe({ next: function() { throw error } });
 
         try { observer.next() }
         catch (x) { caught = x }
@@ -2033,7 +2033,7 @@ exports["default"] = {
     "SubscriptionObserver.prototype has an error method": function(test, __$0) { var __$1; var Observable = (__$1 = _esdown.objd(__$0), __$1.Observable); 
 
         var observer;
-        new Observable(function(x) { observer = x }).subscribe({});
+        new Observable(function(x) { observer = x }).observe({});
 
         testMethodProperty(test, Object.getPrototypeOf(observer), "error", {
             configurable: true,
@@ -2050,7 +2050,7 @@ exports["default"] = {
 
             observer.error(token, 1, 2);
 
-        }).subscribe({
+        }).observe({
 
             error: function(value) { for (var args = [], __$0 = 1; __$0 < arguments.length; ++__$0) args.push(arguments[__$0]); 
                 test._("Input value is forwarded to the observer")
@@ -2074,7 +2074,7 @@ exports["default"] = {
             test._("Throws the input when closed")
             .throws(function(_) { observer.error(token) }, token);
 
-        }).subscribe({
+        }).observe({
             error: function() { return token }
         });
     },
@@ -2085,30 +2085,30 @@ exports["default"] = {
             error = new Error(),
             observable = new Observable(function(x) { observer = x });
 
-        observable.subscribe({});
+        observable.observe({});
         test._("If property does not exist, then error throws the input")
         .throws(function(_) { return observer.error(error); }, error);
 
-        observable.subscribe({ error: undefined });
+        observable.observe({ error: undefined });
         test._("If property is undefined, then error throws the input")
         .throws(function(_) { return observer.error(error); }, error);
 
-        observable.subscribe({ error: null });
+        observable.observe({ error: null });
         test._("If property is null, then error throws the input")
         .throws(function(_) { return observer.error(error); }, error);
 
-        observable.subscribe({ error: {} });
+        observable.observe({ error: {} });
         test._("If property is not a function, then an error is thrown")
         .throws(function(_) { return observer.error(); }, TypeError);
 
         var actual = {};
-        observable.subscribe(actual);
+        observable.observe(actual);
         actual.error = (function(_) { return 1; });
         test._("Method is not accessed until error is called")
         .equals(observer.error(error), 1);
 
         var called = 0;
-        observable.subscribe({
+        observable.observe({
             get error() {
                 called++;
                 return function() {};
@@ -2121,7 +2121,7 @@ exports["default"] = {
         .equals(called, 0);
 
         called = 0;
-        observable.subscribe({
+        observable.observe({
             get error() {
                 called++;
                 return function() {};
@@ -2132,7 +2132,7 @@ exports["default"] = {
         .equals(called, 1);
 
         called = 0;
-        observable.subscribe({
+        observable.observe({
             next: function() { called++ },
             get error() {
                 called++;
@@ -2156,27 +2156,27 @@ exports["default"] = {
         });
 
         called = 0;
-        observable.subscribe({});
+        observable.observe({});
         try { observer.error() }
         catch (x) {}
         test._("Cleanup function is called when observer does not have an error method")
         .equals(called, 1);
 
         called = 0;
-        observable.subscribe({ error: function() { return 1 } });
+        observable.observe({ error: function() { return 1 } });
         observer.error();
         test._("Cleanup function is called when observer has an error method")
         .equals(called, 1);
 
         called = 0;
-        observable.subscribe({ get error() { throw new Error() } });
+        observable.observe({ get error() { throw new Error() } });
         try { observer.error() }
         catch (x) {}
         test._("Cleanup function is called when method lookup throws")
         .equals(called, 1);
 
         called = 0;
-        observable.subscribe({ error: function() { throw new Error() } });
+        observable.observe({ error: function() { throw new Error() } });
         try { observer.error() }
         catch (x) {}
         test._("Cleanup function is called when method throws")
@@ -2187,7 +2187,7 @@ exports["default"] = {
         new Observable(function(x) {
             observer = x;
             return function(_) { throw new Error() };
-        }).subscribe({ error: function() { throw error } });
+        }).observe({ error: function() { throw error } });
 
         try { observer.error() }
         catch (x) { caught = x }
@@ -2211,7 +2211,7 @@ exports["default"] = {
     "SubscriptionObserver.prototype has a complete method": function(test, __$0) { var __$1; var Observable = (__$1 = _esdown.objd(__$0), __$1.Observable); 
 
         var observer;
-        new Observable(function(x) { observer = x }).subscribe({});
+        new Observable(function(x) { observer = x }).observe({});
 
         testMethodProperty(test, Object.getPrototypeOf(observer), "complete", {
             configurable: true,
@@ -2228,7 +2228,7 @@ exports["default"] = {
 
             observer.complete(token, 1, 2);
 
-        }).subscribe({
+        }).observe({
 
             complete: function(value) { for (var args = [], __$0 = 1; __$0 < arguments.length; ++__$0) args.push(arguments[__$0]); 
                 test._("Input value is forwarded to the observer")
@@ -2252,7 +2252,7 @@ exports["default"] = {
             test._("Returns undefined when closed")
             .equals(observer.complete(), undefined);
 
-        }).subscribe({
+        }).observe({
             complete: function() { return token }
         });
     },
@@ -2262,30 +2262,30 @@ exports["default"] = {
         var observer,
             observable = new Observable(function(x) { observer = x });
 
-        observable.subscribe({});
+        observable.observe({});
         test._("If property does not exist, then complete returns undefined")
         .equals(observer.complete(), undefined);
 
-        observable.subscribe({ complete: undefined });
+        observable.observe({ complete: undefined });
         test._("If property is undefined, then complete returns undefined")
         .equals(observer.complete(), undefined);
 
-        observable.subscribe({ complete: null });
+        observable.observe({ complete: null });
         test._("If property is null, then complete returns undefined")
         .equals(observer.complete(), undefined);
 
-        observable.subscribe({ complete: {} });
+        observable.observe({ complete: {} });
         test._("If property is not a function, then an error is thrown")
         .throws(function(_) { return observer.complete(); }, TypeError);
 
         var actual = {};
-        observable.subscribe(actual);
+        observable.observe(actual);
         actual.complete = (function(_) { return 1; });
         test._("Method is not accessed until complete is called")
         .equals(observer.complete(), 1);
 
         var called = 0;
-        observable.subscribe({
+        observable.observe({
             get complete() {
                 called++;
                 return function() {};
@@ -2298,7 +2298,7 @@ exports["default"] = {
         .equals(called, 0);
 
         called = 0;
-        observable.subscribe({
+        observable.observe({
             get complete() {
                 called++;
                 return function() {};
@@ -2309,7 +2309,7 @@ exports["default"] = {
         .equals(called, 1);
 
         called = 0;
-        observable.subscribe({
+        observable.observe({
             next: function() { called++ },
             get complete() {
                 called++;
@@ -2333,26 +2333,26 @@ exports["default"] = {
         });
 
         called = 0;
-        observable.subscribe({});
+        observable.observe({});
         observer.complete();
         test._("Cleanup function is called when observer does not have a complete method")
         .equals(called, 1);
 
         called = 0;
-        observable.subscribe({ complete: function() { return 1 } });
+        observable.observe({ complete: function() { return 1 } });
         observer.complete();
         test._("Cleanup function is called when observer has a complete method")
         .equals(called, 1);
 
         called = 0;
-        observable.subscribe({ get complete() { throw new Error() } });
+        observable.observe({ get complete() { throw new Error() } });
         try { observer.complete() }
         catch (x) {}
         test._("Cleanup function is called when method lookup throws")
         .equals(called, 1);
 
         called = 0;
-        observable.subscribe({ complete: function() { throw new Error() } });
+        observable.observe({ complete: function() { throw new Error() } });
         try { observer.complete() }
         catch (x) {}
         test._("Cleanup function is called when method throws")
@@ -2363,7 +2363,7 @@ exports["default"] = {
         new Observable(function(x) {
             observer = x;
             return function(_) { throw new Error() };
-        }).subscribe({ complete: function() { throw error } });
+        }).observe({ complete: function() { throw error } });
 
         try { observer.complete() }
         catch (x) { caught = x }
@@ -2387,7 +2387,7 @@ exports["default"] = {
     "SubscriptionObserver.prototype has a cancel method": function(test, __$0) { var __$1; var Observable = (__$1 = _esdown.objd(__$0), __$1.Observable); 
 
         var observer;
-        new Observable(function(x) { observer = x }).subscribe({});
+        new Observable(function(x) { observer = x }).observe({});
 
         testMethodProperty(test, Object.getPrototypeOf(observer), "cancel", {
             configurable: true,
@@ -2402,7 +2402,7 @@ exports["default"] = {
 
             test._("Cancel returns undefined").equals(observer.cancel(), undefined);
 
-        }).subscribe({});
+        }).observe({});
     },
 
     "Cleanup functions": function(test, __$0) { var __$1; var Observable = (__$1 = _esdown.objd(__$0), __$1.Observable); 
@@ -2414,7 +2414,7 @@ exports["default"] = {
             return function(_) { called++ };
         });
 
-        observable.subscribe({});
+        observable.observe({});
         observer.cancel();
 
         test._("Cleanup function is called by cancel")
@@ -2426,7 +2426,7 @@ exports["default"] = {
         .equals(called, 1);
 
         called = 0;
-        observable.subscribe({});
+        observable.observe({});
         observer.complete();
         observer.cancel();
 
@@ -2434,7 +2434,7 @@ exports["default"] = {
         .equals(called, 1);
 
         called = 0;
-        observable.subscribe({ error: function() {} });
+        observable.observe({ error: function() {} });
         observer.error();
         observer.cancel();
 
@@ -2445,7 +2445,7 @@ exports["default"] = {
         new Observable(function(x) {
             observer = x;
             return function(_) { called++; observer.cancel(); };
-        }).subscribe({});
+        }).observe({});
 
         observer.cancel();
 
@@ -2457,7 +2457,7 @@ exports["default"] = {
 
         var observer, called = 0;
 
-        new Observable(function(x) { observer = x }).subscribe({
+        new Observable(function(x) { observer = x }).observe({
             next: function() { called++ },
             error: function() { called++ },
             complete: function() { called++ },
@@ -2491,7 +2491,7 @@ exports["default"] = {
     "SubscriptionObserver.prototype has a closed property": function(test, __$0) { var __$1; var Observable = (__$1 = _esdown.objd(__$0), __$1.Observable); 
 
         var observer;
-        new Observable(function(x) { observer = x }).subscribe({});
+        new Observable(function(x) { observer = x }).observe({});
 
         testMethodProperty(test, Object.getPrototypeOf(observer), "closed", {
             get: true,
@@ -2514,7 +2514,7 @@ exports["default"] = {
             test._("Closed is false after sending next")
             .equals(observer.closed, false);
 
-        }).subscribe({});
+        }).observe({});
 
         test._("Closed is false after subscription")
         .equals(observer.closed, false);
@@ -2530,7 +2530,7 @@ exports["default"] = {
             test._("Closed is true after calling complete")
             .equals(observer.closed, true);
 
-        }).subscribe(sink);
+        }).observe(sink);
 
         new Observable(function(observer) {
 
@@ -2538,7 +2538,7 @@ exports["default"] = {
             test._("Closed is true after calling error")
             .equals(observer.closed, true);
 
-        }).subscribe(sink);
+        }).observe(sink);
     },
 
 };
@@ -2550,7 +2550,7 @@ exports["default"] = {
 var TestRunner = __M(1).TestRunner;
 
 var constructor = __M(2)['default'];
-var subscribe = __M(3)['default'];
+var observe = __M(3)['default'];
 var forEach = __M(4)['default'];
 var map = __M(5)['default'];
 var filter = __M(6)['default'];
@@ -2572,7 +2572,7 @@ function runTests(C) {
 
         "Observable constructor": constructor,
 
-        "Observable.prototype.subscribe": subscribe,
+        "Observable.prototype.observe": observe,
         "Observable.prototype.forEach": forEach,
         "Observable.prototype.filter": filter,
         "Observable.prototype.map": map,

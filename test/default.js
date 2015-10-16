@@ -1,7 +1,7 @@
 import { TestRunner } from "moon-unit";
 
 import constructor from "./constructor.js";
-import subscribe from "./subscribe.js";
+import observe from "./observe.js";
 import forEach from "./forEach.js";
 import map from "./map.js";
 import filter from "./filter.js";
@@ -23,7 +23,7 @@ export function runTests(C) {
 
         "Observable constructor": constructor,
 
-        "Observable.prototype.subscribe": subscribe,
+        "Observable.prototype.observe": observe,
         "Observable.prototype.forEach": forEach,
         "Observable.prototype.filter": filter,
         "Observable.prototype.map": map,

@@ -5,7 +5,7 @@ export default {
     "SubscriptionObserver.prototype has a complete method" (test, { Observable }) {
 
         let observer;
-        new Observable(x => { observer = x }).subscribe({});
+        new Observable(x => { observer = x }).observe({});
 
         testMethodProperty(test, Object.getPrototypeOf(observer), "complete", {
             configurable: true,
@@ -22,7 +22,7 @@ export default {
 
             observer.complete(token, 1, 2);
 
-        }).subscribe({
+        }).observe({
 
             complete(value, ...args) {
                 test._("Input value is forwarded to the observer")
@@ -46,7 +46,7 @@ export default {
             test._("Returns undefined when closed")
             .equals(observer.complete(), undefined);
 
-        }).subscribe({
+        }).observe({
             complete() { return token }
         });
     },
@@ -56,30 +56,30 @@ export default {
         let observer,
             observable = new Observable(x => { observer = x });
 
-        observable.subscribe({});
+        observable.observe({});
         test._("If property does not exist, then complete returns undefined")
         .equals(observer.complete(), undefined);
 
-        observable.subscribe({ complete: undefined });
+        observable.observe({ complete: undefined });
         test._("If property is undefined, then complete returns undefined")
         .equals(observer.complete(), undefined);
 
-        observable.subscribe({ complete: null });
+        observable.observe({ complete: null });
         test._("If property is null, then complete returns undefined")
         .equals(observer.complete(), undefined);
 
-        observable.subscribe({ complete: {} });
+        observable.observe({ complete: {} });
         test._("If property is not a function, then an error is thrown")
         .throws(_=> observer.complete(), TypeError);
 
         let actual = {};
-        observable.subscribe(actual);
+        observable.observe(actual);
         actual.complete = (_=> 1);
         test._("Method is not accessed until complete is called")
         .equals(observer.complete(), 1);
 
         let called = 0;
-        observable.subscribe({
+        observable.observe({
             get complete() {
                 called++;
                 return function() {};
@@ -92,7 +92,7 @@ export default {
         .equals(called, 0);
 
         called = 0;
-        observable.subscribe({
+        observable.observe({
             get complete() {
                 called++;
                 return function() {};
@@ -103,7 +103,7 @@ export default {
         .equals(called, 1);
 
         called = 0;
-        observable.subscribe({
+        observable.observe({
             next() { called++ },
             get complete() {
                 called++;
@@ -127,26 +127,26 @@ export default {
         });
 
         called = 0;
-        observable.subscribe({});
+        observable.observe({});
         observer.complete();
         test._("Cleanup function is called when observer does not have a complete method")
         .equals(called, 1);
 
         called = 0;
-        observable.subscribe({ complete() { return 1 } });
+        observable.observe({ complete() { return 1 } });
         observer.complete();
         test._("Cleanup function is called when observer has a complete method")
         .equals(called, 1);
 
         called = 0;
-        observable.subscribe({ get complete() { throw new Error() } });
+        observable.observe({ get complete() { throw new Error() } });
         try { observer.complete() }
         catch (x) {}
         test._("Cleanup function is called when method lookup throws")
         .equals(called, 1);
 
         called = 0;
-        observable.subscribe({ complete() { throw new Error() } });
+        observable.observe({ complete() { throw new Error() } });
         try { observer.complete() }
         catch (x) {}
         test._("Cleanup function is called when method throws")
@@ -157,7 +157,7 @@ export default {
         new Observable(x => {
             observer = x;
             return _=> { throw new Error() };
-        }).subscribe({ complete() { throw error } });
+        }).observe({ complete() { throw error } });
 
         try { observer.complete() }
         catch (x) { caught = x }

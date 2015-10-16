@@ -57,7 +57,7 @@ export default {
             returns.push(observer.next(3));
             returns.push(observer.next(4));
             observer.complete();
-        }).filter(x => x % 2).subscribe({
+        }).filter(x => x % 2).observe({
             next(v) { values.push(v); return -v; }
         });
 
@@ -78,7 +78,7 @@ export default {
 
         new Observable(observer => {
             returned = observer.next(1);
-        }).filter(x => { throw error }).subscribe({
+        }).filter(x => { throw error }).observe({
             error(e) { thrown = e; return token; }
         });
 
@@ -99,7 +99,7 @@ export default {
 
         new Observable(observer => {
             returned = observer.error(error);
-        }).filter(x => true).subscribe({
+        }).filter(x => true).observe({
             error(e) { thrown = e; return token; }
         });
 
@@ -120,7 +120,7 @@ export default {
 
         new Observable(observer => {
             returned = observer.complete(arg);
-        }).filter(x => true).subscribe({
+        }).filter(x => true).observe({
             complete(v) { passed = v; return token; }
         });
 

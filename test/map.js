@@ -55,7 +55,7 @@ export default {
             returns.push(observer.next(1));
             returns.push(observer.next(2));
             observer.complete();
-        }).map(x => x * 2).subscribe({
+        }).map(x => x * 2).observe({
             next(v) { values.push(v); return -v; }
         });
 
@@ -76,7 +76,7 @@ export default {
 
         new Observable(observer => {
             returned = observer.next(1);
-        }).map(x => { throw error }).subscribe({
+        }).map(x => { throw error }).observe({
             error(e) { thrown = e; return token; }
         });
 
@@ -97,7 +97,7 @@ export default {
 
         new Observable(observer => {
             returned = observer.error(error);
-        }).map(x => x).subscribe({
+        }).map(x => x).observe({
             error(e) { thrown = e; return token; }
         });
 
@@ -118,7 +118,7 @@ export default {
 
         new Observable(observer => {
             returned = observer.complete(arg);
-        }).map(x => x).subscribe({
+        }).map(x => x).observe({
             complete(v) { passed = v; return token; }
         });
 

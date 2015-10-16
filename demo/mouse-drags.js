@@ -4,9 +4,9 @@ function takeUntil(stream, control) {
 
     return new Observable(sink => {
 
-        let cancelSource = stream.subscribe(sink);
+        let cancelSource = stream.observe(sink);
 
-        let cancelInput = control.subscribe({
+        let cancelInput = control.observe({
 
             next: x => sink.complete(x),
             error: x => sink.error(x),
@@ -29,14 +29,14 @@ function switchLatest(stream) {
 
         let inner = null;
 
-        let outer = stream.subscribe({
+        let outer = stream.observe({
 
             next(value) {
 
                 if (inner)
                     inner();
 
-                inner = value.subscribe({
+                inner = value.observe({
 
                     next: x => sink.next(x),
                     error: x => sink.error(x),
@@ -87,7 +87,7 @@ function mouseDrags(element) {
     return switchLatest(moveStreams);
 }
 
-let cancel = mouseDrags(document.body).subscribe({
+let cancel = mouseDrags(document.body).observe({
     next(e) { console.log(`DRAG: <${ e.x }:${ e.y }>`) }
 });
 

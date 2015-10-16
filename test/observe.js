@@ -2,9 +2,9 @@ import { testMethodProperty } from "./helpers.js";
 
 export default {
 
-    "Observable.prototype has a subscribe property" (test, { Observable }) {
+    "Observable.prototype has an observe property" (test, { Observable }) {
 
-        testMethodProperty(test, Observable.prototype, "subscribe", {
+        testMethodProperty(test, Observable.prototype, "observe", {
             configurable: true,
             writable: true,
             length: 1,
@@ -17,23 +17,23 @@ export default {
 
         test
         ._("Throws if observer is not an object")
-        .throws(_=> x.subscribe(null), TypeError)
-        .throws(_=> x.subscribe(undefined), TypeError)
-        .throws(_=> x.subscribe(1), TypeError)
-        .throws(_=> x.subscribe(true), TypeError)
-        .throws(_=> x.subscribe("string"), TypeError)
+        .throws(_=> x.observe(null), TypeError)
+        .throws(_=> x.observe(undefined), TypeError)
+        .throws(_=> x.observe(1), TypeError)
+        .throws(_=> x.observe(true), TypeError)
+        .throws(_=> x.observe("string"), TypeError)
 
         ._("Any object may be an observer")
-        .not().throws(_=> x.subscribe({}))
-        .not().throws(_=> x.subscribe(Object(1)))
-        .not().throws(_=> x.subscribe(function() {}))
+        .not().throws(_=> x.observe({}))
+        .not().throws(_=> x.observe(Object(1)))
+        .not().throws(_=> x.observe(function() {}))
         ;
     },
 
     "Subscriber arguments" (test, { Observable }) {
 
         let observer = null;
-        new Observable(x => { observer = x }).subscribe({});
+        new Observable(x => { observer = x }).observe({});
 
         test._("Subscriber is called with an observer")
         .equals(typeof observer, "object")
@@ -52,16 +52,16 @@ export default {
 
         test
         ._("Undefined can be returned")
-        .not().throws(_=> new Observable(sink => undefined).subscribe(sink))
+        .not().throws(_=> new Observable(sink => undefined).observe(sink))
         ._("Null can be returned")
-        .not().throws(_=> new Observable(sink => null).subscribe(sink))
+        .not().throws(_=> new Observable(sink => null).observe(sink))
         ._("Functions can be returned")
-        .not().throws(_=> new Observable(sink => function() {}).subscribe(sink))
+        .not().throws(_=> new Observable(sink => function() {}).observe(sink))
         ._("Objects cannot be returned")
-        .throws(_=> new Observable(sink => ({})).subscribe(sink), TypeError)
+        .throws(_=> new Observable(sink => ({})).observe(sink), TypeError)
         ._("Non-functions can be returned")
-        .throws(_=> new Observable(sink => 0).subscribe(sink), TypeError)
-        .throws(_=> new Observable(sink => false).subscribe(sink), TypeError)
+        .throws(_=> new Observable(sink => 0).observe(sink), TypeError)
+        .throws(_=> new Observable(sink => false).observe(sink), TypeError)
         ;
     },
 
@@ -70,7 +70,7 @@ export default {
         let called = 0;
         let cancel = new Observable(observer => {
             return _=> called++;
-        }).subscribe({});
+        }).observe({});
 
         test
         ._("Subscribe returns a function")
@@ -89,7 +89,7 @@ export default {
 
         let unsubscribe = new Observable(sink => {
             return _=> { called++ };
-        }).subscribe({
+        }).observe({
             complete(v) { returned++ },
         });
 
@@ -108,7 +108,7 @@ export default {
         new Observable(sink => {
             sink.error(1);
             return _=> { called++ };
-        }).subscribe({
+        }).observe({
             error(v) {},
         });
 
@@ -120,7 +120,7 @@ export default {
         new Observable(sink => {
             sink.complete(1);
             return _=> { called++ };
-        }).subscribe({
+        }).observe({
             complete(v) {},
         });
 
@@ -135,10 +135,10 @@ export default {
             observable = new Observable(_=> { throw error });
 
         test._("Subscribe throws if the observer does not handle errors")
-        .throws(_=> observable.subscribe({}), error);
+        .throws(_=> observable.observe({}), error);
 
         let thrown = null;
-        observable.subscribe({ error(e) { thrown = e } });
+        observable.observe({ error(e) { thrown = e } });
 
         test._("Subscribe sends an error to the observer")
         .equals(thrown, error);

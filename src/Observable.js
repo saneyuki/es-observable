@@ -246,7 +246,7 @@ export class Observable {
         this._subscriber = subscriber;
     }
 
-    subscribe(observer) {
+    observe(observer) {
 
         // Wrap the observer in order to maintain observation invariants
         observer = new SubscriptionObserver(observer, this._subscriber);
@@ -260,7 +260,7 @@ export class Observable {
             if (typeof fn !== "function")
                 throw new TypeError(fn + " is not a function");
 
-            this.subscribe({
+            this.observe({
 
                 next(value) {
 
@@ -299,7 +299,7 @@ export class Observable {
             if (observable.constructor === C)
                 return observable;
 
-            return new C(observer => observable.subscribe(observer));
+            return new C(observer => observable.observe(observer));
         }
 
         return new C(observer => {
@@ -365,7 +365,7 @@ export class Observable {
 
         let C = this.constructor[Symbol.species];
 
-        return new C(observer => this.subscribe({
+        return new C(observer => this.observe({
 
             next(value) {
 
@@ -387,7 +387,7 @@ export class Observable {
 
         let C = this.constructor[Symbol.species];
 
-        return new C(observer => this.subscribe({
+        return new C(observer => this.observe({
 
             next(value) {
 

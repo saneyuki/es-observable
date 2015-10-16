@@ -80,7 +80,7 @@ function parse(tokenStream) {
         let generator = start();
         generator.next();
 
-        return tokenStream.subscribe({
+        return tokenStream.observe({
 
             next(x) {
 
@@ -101,7 +101,7 @@ function parse(tokenStream) {
     });
 }
 
-parse(tokenStream()).subscribe({
+parse(tokenStream()).observe({
     complete(ast) { console.log(ast) },
     error(error) { console.log(error) },
 });

@@ -5,7 +5,7 @@ export default {
     "SubscriptionObserver.prototype has a closed property" (test, { Observable }) {
 
         let observer;
-        new Observable(x => { observer = x }).subscribe({});
+        new Observable(x => { observer = x }).observe({});
 
         testMethodProperty(test, Object.getPrototypeOf(observer), "closed", {
             get: true,
@@ -28,7 +28,7 @@ export default {
             test._("Closed is false after sending next")
             .equals(observer.closed, false);
 
-        }).subscribe({});
+        }).observe({});
 
         test._("Closed is false after subscription")
         .equals(observer.closed, false);
@@ -44,7 +44,7 @@ export default {
             test._("Closed is true after calling complete")
             .equals(observer.closed, true);
 
-        }).subscribe(sink);
+        }).observe(sink);
 
         new Observable(observer => {
 
@@ -52,7 +52,7 @@ export default {
             test._("Closed is true after calling error")
             .equals(observer.closed, true);
 
-        }).subscribe(sink);
+        }).observe(sink);
     },
 
 };

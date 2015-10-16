@@ -106,7 +106,7 @@ export default {
         result = Observable.from.call(target, {
             [getSymbol("observable")]() {
                 return {
-                    subscribe(x) {
+                    observe(x) {
                         input = x;
                         return token;
                     },
@@ -119,9 +119,9 @@ export default {
         .equals(result.token, token)
         ._("Constructor is called with a function")
         .equals(typeof result.fn, "function")
-        ._("Calling the function calls subscribe on the object and returns the result")
+        ._("Calling the function calls observe on the object and returns the result")
         .equals(result.fn(123), token)
-        ._("The subscriber argument is supplied to the subscribe method")
+        ._("The subscriber argument is supplied to the observe method")
         .equals(input, 123)
         ;
 
@@ -138,7 +138,7 @@ export default {
             if (hasSymbol("iterator"))
                 iterable = iterable[Symbol.iterator]();
 
-            Observable.from(iterable).subscribe({
+            Observable.from(iterable).observe({
 
                 next(v) {
                     values.push(v);
@@ -166,7 +166,7 @@ export default {
 
             let values = [];
 
-            let cancel = Observable.from([1, 2, 3, 4]).subscribe({
+            let cancel = Observable.from([1, 2, 3, 4]).observe({
 
                 next(v) {
 
@@ -188,7 +188,7 @@ export default {
 
             let values = [];
 
-            let cancel = Observable.from([1, 2, 3, 4]).subscribe({
+            let cancel = Observable.from([1, 2, 3, 4]).observe({
                 next(v) { values.push(v) }
             });
 
@@ -205,7 +205,7 @@ export default {
     "Non-iterables result in a catchable error" (test, { Observable }) {
 
         let error = null;
-        Observable.from({}).subscribe({ error(e) { error = e } });
+        Observable.from({}).observe({ error(e) { error = e } });
 
         return new Promise(resolve => {
 
